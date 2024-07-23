@@ -1,0 +1,51 @@
+<?php
+	session_start();
+	if(isset($_POST['bottone']))
+    {
+        $controllo=0;
+    	include("connessioneDatabase.php");
+        $inputEmail=trim($_POST['email']);
+        $inputPsw=trim(md5($_POST['psw']));
+        $query="SELECT * FROM staff";
+        $select=$db->query($query);
+        $select->num_rows;
+        while($riga=$select->fetch_object())
+        {
+        	if(($inputEmail==$riga->email || $inputEmail==$riga->nick) && $inputPsw==$riga->password)
+            {
+              $_SESSION['idStaff']=$riga->idStaff;
+              $_SESSION['nome']=$riga->nome;
+              $_SESSION['cognome']=$riga->cognome;
+              $_SESSION['nick']=$riga->nick;
+              $_SESSION['email']=$riga->email;
+              $_SESSION['password']=$riga->password;
+              $_SESSION['ruolo']=$riga->ruolo;
+              $_SESSION['cellulare']=$riga->cellulare;
+              $_SESSION['stato']=$riga->stato;
+              if($riga->immagine==NULL)
+              {
+              	$_SESSION['immagine']=NULL;
+              }
+              else
+              {
+               	$_SESSION['immagine']=$riga->immagine;
+              }
+              header("location: indirizza.php");
+              $controllo=0;
+        	}
+            else
+            {
+				$controllo=1;
+            }
+        }
+        if($controllo==1)
+        {
+          	include("accessonegato.html");
+        }
+    }
+    else
+    {
+    	include("logout.php");
+    	header("location: accessonegato.html");
+    }
+?>
